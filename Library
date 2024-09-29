@@ -1,0 +1,156 @@
+#include <iomanip>
+#include <iostream>
+#include <string>
+using namespace std;
+
+class library {
+private:
+  string name, author, publisher;
+
+public:
+  int stock;
+  float price;
+  void addBook() {
+    cout << "Enter book name : ";
+    cin >> name;
+    cout << "Eter price : ";
+    cin >> price;
+    cout << "Enter author : ";
+    cin >> author;
+    cout << "Enter publisher : ";
+    cin >> publisher;
+    cout << "Added stock : ";
+    cin >> stock;
+  }
+
+  void check(int num) {
+    if (num <= stock) {
+      cout << "Requied number of books are available ";
+    } else {
+      cout << "Required number of copies are not available.";
+    }
+  }
+
+  void display() {
+
+    cout << setw(15) << left << name;
+    cout << setw(15) << left << author;
+    cout << setw(15) << left << publisher;
+    cout << setw(10) << right << price;
+    cout << setw(10) << right << stock << endl;
+  }
+
+  string getName() { return name; }
+};
+
+int main() {
+  int i;
+  library books[100];
+  int total = 0;
+  string key;
+  int ch;
+  do {
+    cout
+        << "\n\n1. Add book \n2. Display book \n3. Check for stock \n4. Update "
+           "stock \n5. Sell books \n6. EXIT \n:->:";
+    cin >> ch;
+
+    switch (ch) {
+    case 1:
+      if (total <= 100)
+
+      {
+        for (int i = total; i <= total; i++) {
+          books[i].addBook();
+        }
+        total += 1;
+      } else {
+        cout << "Library full ";
+      }
+      break;
+    case 2:
+      cout << setw(15) << left << "Title" << setw(15) << left << "author"
+           << setw(15) << left << "publisher" << setw(10) << right << "price"
+           << setw(10) << right << "stock" << endl;
+      cout << setfill('-') << setw(65) << ""
+           << "" << endl;
+      cout << setfill(' '); // Reset fill character
+
+      for (int i = 0; i < total; i++) {
+        books[i].display();
+      }
+      break;
+
+      /*if (i > total) {
+        cout << "Book NOT available \n";
+      }*/
+      break;
+    case 3:
+      cout << "Enter title to check stock : ";
+      cin >> key;
+      for (int i = 0; i <= total; i++) {
+        if (books[i].getName() == key) {
+          int num;
+          cout << "Enter number of copies : ";
+          cin >> num;
+          books[i].check(num);
+          break;
+        }
+      }
+      if (i > total) {
+        cout << "Book NOT available \n";
+      }
+      break;
+
+    case 4:
+      cout << "Enter title to update stock: ";
+      cin >> key;
+      for (i = 0; i <= total; i++) {
+        if (books[i].getName() == key) {
+          int newStock;
+          cout << "Enter new stock quantity: ";
+          cin >> newStock;
+          books[i].stock = newStock;
+          cout << "Stock updated successfully!\n";
+          break;
+        }
+      }
+      if (i > total) {
+        cout << "Book NOT available \n";
+      }
+      break;
+    case 5:
+      cout << "Enter title of book to sell: ";
+      cin >> key;
+      for (int i = 0; i <= total; i++) {
+        if (books[i].getName() == key) {
+          int numCopies;
+          cout << "Enter number of copies to sell: ";
+          cin >> numCopies;
+          if (numCopies <= books[i].stock) {
+            books[i].stock -= numCopies;
+            float totalPrice = numCopies * books[i].price;
+            cout << "Sale successful!\n";
+            cout << "Number of copies sold: " << numCopies << endl;
+            cout << "Total price: " << totalPrice << endl;
+            cout << "Remaining stock: " << books[i].stock << endl;
+            break;
+          } else {
+            cout << "Not enough stock available.\n";
+            break;
+          }
+        }
+      }
+      if (i > total) {
+        cout << "Book not found.\n";
+      }
+      break;
+    case 6:
+      cout << "EXITING.......";
+      break;
+    default:
+      cout << "WRONG choice..";
+      break;
+    }
+  } while (ch != 6);
+}
