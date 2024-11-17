@@ -1,0 +1,205 @@
+#include <iostream>
+#include <string>
+#include <iomanip>
+#include <algorithm>  // For sorting
+
+using namespace std;
+
+const int MAX = 100;
+
+class Marks {
+private:
+    struct Record {
+        string name;
+        int rollNo;
+        string subject;
+        string subjectCode;
+        int internalMarks;
+        int universityMarks;
+
+        // Input function for the Record
+        void input() {
+            cout << "Name: ";
+            cin >> name;
+            cout << "Roll Number: ";
+            cin >> rollNo;
+            cout << "Subject: ";
+            cin >> subject;
+            cout << "Subject Code: ";
+            cin >> subjectCode;
+            cout << "Internal Marks: ";
+            cin >> internalMarks;
+            cout << "University Marks: ";
+            cin >> universityMarks;
+        }
+
+        // Display function for the Record
+        void display() const {
+            cout << left << setw(20) << name 
+                 << setw(10) << rollNo 
+                 << setw(20) << subject 
+                 << setw(15) << subjectCode 
+                 << setw(15) << internalMarks 
+                 << setw(15) << universityMarks << endl;
+        }
+    };
+
+    Record r[MAX];  
+    int count = 0;  
+
+public:
+    // Build the master table of records
+    void buildMasterTable() {
+        int n;
+        cout << "Enter the number of students: ";
+        cin >> n;
+
+        if (n > MAX) {
+            cout << "Exceeds maximum capacity of " << MAX << " students.\n";
+            return;
+        }
+
+        for (int i = 0; i < n; ++i) {
+            cout << "\nEnter details for student " << i + 1 << ":\n";
+            r[count].input();  
+            count+=1;  
+        }
+    }
+
+    void listTable() const {
+        if (count == 0) {
+            cout << "No records available.\n";
+            return;
+        }
+
+        cout << "\nMaster Table:\n";
+        cout << left << setw(20) << "Name" 
+             << setw(10) << "Roll No" 
+             << setw(20) << "Subject" 
+             << setw(15) << "Sub Code" 
+             << setw(15) << "Internal Marks" 
+             << setw(15) << "Univ Marks" << endl;
+
+        cout << string(95, '-') << endl;  // Print a separator line
+        for (int i = 0; i < count; ++i) {
+            r[i].display();  // Display each record
+        }
+    }
+
+    void insertEntry() {
+        if (count >= MAX) {
+            cout << "Cannot add more records. Maximum limit reached.\n";
+            return;
+        }
+
+        cout << "\nEnter details for the new student:\n";
+        r[count].input();  
+        count++;  
+    }
+
+    void deleteEntry() {
+        int rollNo;
+        cout << "Enter Roll Number to delete: ";
+        cin >> rollNo;
+
+        bool found = false;
+        for (int i = 0; i < count; ++i) {
+            if (r[i].rollNo == rollNo) {
+                for (int j = i; j < count - 1; ++j) {
+                    r[j] = r[j + 1];
+                }
+                count--;  
+                cout << "Record with Roll No " << rollNo << " deleted.\n";
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            cout << "No record found with Roll No " << rollNo << ".\n";
+        }
+    }
+
+    void editEntry() {
+        int rollNo;
+        cout << "Enter Roll Number to edit: ";
+        cin >> rollNo;
+
+        bool found = false;
+        for (int i = 0; i < count; ++i) {
+            if (r[i].rollNo == rollNo) {
+                cout << "\nEditing record for Roll No " << rollNo << ":\n";
+                r[i].input();  // Re-enter details for the record
+                cout << "Record updated.\n";
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            cout << "No record found with Roll No " << rollNo << ".\n";
+        }
+    }
+
+    void searchRecord() const {
+        int rollNo;
+        cout << "Enter Roll Number to search: ";
+        cin >> rollNo;
+
+        bool found = false;
+        for (int i = 0; i < count; ++i) {
+            if (r[i].rollNo == rollNo) {
+                cout << "\nRecord found:\n";
+                r[i].display();  
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            cout << "No record found with Roll No " << rollNo << ".\n";
+        }
+    }
+
+    // Sort records based on roll number
+    void sortRecords() {
+        sort(r, r + count, [](const Record &a, const Record &b) {
+            return a.rollNo < b.rollNo;  
+        });
+        cout << "Records sorted by Roll Number.\n";
+    }
+};
+
+int main() {
+    Marks marks;
+    int choice;
+
+    do {
+        // Display the menu
+        cout << "\nMenu:\n";
+        cout << "1. Build Master Table\n";
+        cout << "2. Display Table\n";
+        cout << "3. Insert New Entry\n";
+        cout << "4. Delete Entry\n";
+        cout << "5. Edit Entry\n";
+        cout << "6. Search for Record\n";
+        cout << "7. Sort Records by Roll No\n";
+        cout << "8. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1: marks.buildMasterTable(); break;
+            case 2: marks.listTable(); break;
+            case 3: marks.insertEntry(); break;
+            case 4: marks.deleteEntry(); break;
+            case 5: marks.editEntry(); break;
+            case 6: marks.searchRecord(); break;
+            case 7: marks.sortRecords(); break;
+            case 8: cout << "Exiting...\n"; break;
+            default: cout << "Invalid choice! Try again.\n"; break;
+        }
+    } while (choice != 8);
+
+    return 0;
+}
