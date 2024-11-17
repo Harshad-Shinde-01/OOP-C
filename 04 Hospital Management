@@ -1,0 +1,201 @@
+
+
+#include <iostream>
+#include <string>
+#include <iomanip>
+
+using namespace std;
+
+const int MAX_STAFF = 100;  
+class Person {
+protected:
+    string name;
+    int age;
+    string id;  
+
+public:
+    Person(const string& nam, int ag, const string& personID) 
+        : name(nam), age(ag), id(personID) {}
+
+    
+    virtual void displayInfo() const {
+        cout << left << setw(10) << id << setw(20) << name << setw(5) << age;
+    }
+
+    
+    string getID() const {
+        return id;
+    }
+
+    virtual ~Person() {}
+};
+
+class Doctor : virtual public Person {
+protected:
+    string speciality;
+
+public:
+    Doctor(const string& special, const string& nam, int ag, const string& personID)
+        : Person(nam, ag, personID), speciality(special) {}
+
+    virtual void displayInfo() const override {
+        Person::displayInfo();  // Display the basic info
+        cout << setw(20) << speciality << endl;
+    }
+};
+
+
+class Nurse : virtual public Person {
+protected:
+    string department;
+
+public:
+    Nurse(const string& dept, const string& nam, int ag, const string& personID)
+        : Person(nam, ag, personID), department(dept) {}
+
+    virtual void displayInfo() const override {
+        Person::displayInfo();  // Display the basic info
+        cout << setw(20) << department << endl;
+    }
+};
+
+
+class Admin : public Doctor, public Nurse {
+private:
+    string position;
+
+public:
+    Admin(const string& pos, const string& dept, const string& special, 
+          const string& nam, int ag, const string& personID)
+        : Person(nam, ag, personID), Doctor(special, nam, ag, personID), 
+          Nurse(dept, nam, ag, personID), position(pos) {}
+
+    virtual void displayInfo() const override {
+        Person::displayInfo();
+        cout << setw(20) << speciality << setw(20) << department << setw(20) << position << endl;
+    }
+};
+
+int main() {
+    Person* staff[MAX_STAFF];  
+    int staffCount = 0;  
+    int choice;
+
+    do {
+      
+        cout << "\nMenu:\n";
+        cout << "1. Add Doctor\n";
+        cout << "2. Add Nurse\n";
+        cout << "3. Add Admin\n";
+        cout << "4. Search Staff by ID\n";
+        cout << "5. Display All Staff\n";
+        cout << "6. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1: {
+                string name, speciality, id;
+                int age;
+                cout << "Enter Doctor's ID: ";
+                cin >> id;
+                cout << "Enter Doctor's Name: ";
+                getline(cin, name);
+                cout << "Enter Doctor's Age: ";
+                cin >> age;
+                cout << "Enter Doctor's Speciality: ";
+                
+                getline(cin, speciality);
+
+                staff[staffCount++] = new Doctor(speciality, name, age, id);
+                break;
+            }
+            case 2: {
+                string name, department, id;
+                int age;
+                cout << "Enter Nurse's ID: ";
+                cin >> id;
+                cout << "Enter Nurse's Name: ";
+                cin >> ws;
+                getline(cin, name);
+                cout << "Enter Nurse's Age: ";
+                cin >> age;
+                cout << "Enter Nurse's Department: ";
+                cin >> ws;
+                getline(cin, department);
+
+                staff[staffCount++] = new Nurse(department, name, age, id);
+                break;
+            }
+            case 3: {
+                string name, department, position, speciality, id;
+                int age;
+                cout << "Enter Admin's ID: ";
+                cin >> id;
+                cout << "Enter Admin's Name: ";
+                cin >> ws;
+                getline(cin, name);
+                cout << "Enter Admin's Age: ";
+                cin >> age;
+                cout << "Enter Admin's Department: ";
+                cin >> ws;
+                getline(cin, department);
+                cout << "Enter Admin's Speciality: ";
+                cin >> ws;
+                getline(cin, speciality);
+                cout << "Enter Admin's Position: ";
+                cin >> ws;
+                getline(cin, position);
+
+                staff[staffCount++] = new Admin(position, department, speciality, name, age, id);
+                break;
+            }
+            case 4: {
+                string id;
+                cout << "Enter ID to search: ";
+                cin >> id;
+
+                bool found = false;
+                for (int i = 0; i < staffCount; ++i) {
+                    if (staff[i]->getID() == id) {
+                        staff[i]->displayInfo();  
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found) {
+                    cout << "No person found with ID " << id << endl;
+                }
+                break;
+            }
+            case 5: {
+                if (staffCount == 0) {
+                    cout << "No staff members to display." << endl;
+                    break;
+                }
+
+                cout << left << setw(10) << "ID" << setw(20) << "Name" << setw(5) << "Age" << setw(20) << "Speciality/Dept/Pos" << endl;
+                cout << "------------------------------------------------------------" << endl;
+
+                for (int i = 0; i < staffCount; ++i) {
+                    staff[i]->displayInfo();
+                }
+                break;
+            }
+            case 6:
+                cout << "Exiting program.\n";
+                break;
+            default:
+                cout << "Invalid choice! Please try again.\n";
+                break;
+        }
+    } while (choice != 6);
+
+    
+    for (int i = 0; i < staffCount; ++i) {
+        delete staff[i];
+    }
+
+    return 0;
+}
